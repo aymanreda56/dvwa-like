@@ -21,6 +21,7 @@ import json
 app = Flask(__name__)
 # Weak secret key — intentionally predictable
 app.secret_key = "dvwa_secret_key_123"
+port = int(os.environ.get("PORT", 5000))
 
 # ── In-memory "database" of users ─────────────────────────────────────────────
 # Plaintext passwords — intentional vulnerability
@@ -145,4 +146,4 @@ def setup():
 
 if __name__ == "__main__":
     # Debug mode on — intentional vulnerability (stack traces exposed)
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=True)
