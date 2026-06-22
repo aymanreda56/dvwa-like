@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DVWA — Login</title>
+  <link rel="stylesheet" href="/static/css/dvwa.css" />
+</head>
+<body>
+
+<div id="page-wrapper">
+
+  <!-- ── Header ── -->
+  <div id="header">
+    <div id="header-icon">🔥</div>
+    <div id="header-logo">
+      <span class="logo-main">DVWA</span>
+      <span class="logo-sub">Damn Vulnerable Web App</span>
+    </div>
+  </div>
+
+  <!-- ── Navigation ── -->
+  <div id="navbar">
+    <a href="/vulnerabilities/brute/" class="nav-active">Login</a>
+    <a href="/attack-log">Attack Log</a>
+    <a href="/setup">Setup</a>
+    {% if logged_in %}<a href="/logout">Logout</a>{% endif %}
+  </div>
+
+  <!-- ── Body ── -->
+  <div id="body-wrapper">
+
+    <!-- ── Sidebar ── -->
+    <div id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-header">Vulnerabilities</div>
+        <ul class="sidebar-nav">
+          <li><a href="/vulnerabilities/brute/" class="active-link">Brute Force</a></li>
+          <li><a href="#">Command Injection</a></li>
+          <li><a href="#">CSRF</a></li>
+          <li><a href="#">File Inclusion</a></li>
+          <li><a href="#">File Upload</a></li>
+          <li><a href="#">SQL Injection</a></li>
+          <li><a href="#">Weak Session IDs</a></li>
+          <li><a href="#">XSS (Reflected)</a></li>
+          <li><a href="#">XSS (Stored)</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-header">Setup</div>
+        <ul class="sidebar-nav">
+          <li><a href="/setup">Users &amp; Credentials</a></li>
+          <li><a href="/attack-log">Attack Log</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Main Content ── -->
+    <div id="main-content">
+
+      {% if result == 'success' and user_data %}
+      <!-- ── Success ── -->
+      <div class="alert alert-success">
+        Welcome, <strong>{{ user_data.username }}</strong>. Logged in as {{ user_data.role }}.
+      </div>
+      <div class="welcome-box">
+        <h3>🏁 Flag</h3>
+        <div class="flag">{{ user_data.flag }}</div>
+      </div>
+      <div style="margin-top:14px;">
+        <a href="/logout"><button class="btn-danger">Logout</button></a>
+        <a href="/attack-log"><button class="btn-secondary" style="margin-left:8px;">Attack Log</button></a>
+      </div>
+
+      {% else %}
+      <!-- ── Login Form ── -->
+
+      {% if result == 'failure' %}
+      <div class="alert alert-error">{{ error }}</div>
+      {% endif %}
+
+      <div class="login-container">
+        <div class="login-header">Login</div>
+        <div class="login-body">
+          <form action="/vulnerabilities/brute/" method="GET">
+            <table class="form-table">
+              <tr>
+                <td>Username:</td>
+                <td>
+                  <input type="text"
+                         name="username"
+                         value="{{ username }}"
+                         autocomplete="off" />
+                </td>
+              </tr>
+              <tr>
+                <td>Password:</td>
+                <td>
+                  <input type="text"
+                         name="password"
+                         value="{{ password }}"
+                         autocomplete="off" />
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <input type="submit" value="Login" class="btn-submit" />
+                </td>
+              </tr>
+            </table>
+          </form>
+        </div>
+      </div>
+
+      {% endif %}
+
+    </div><!-- /main-content -->
+  </div><!-- /body-wrapper -->
+
+  <div id="footer">
+    Damn Vulnerable Web Application (DVWA)
+  </div>
+
+</div><!-- /page-wrapper -->
+
+</body>
+</html>

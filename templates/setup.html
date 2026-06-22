@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DVWA — Setup</title>
+  <link rel="stylesheet" href="/static/css/dvwa.css" />
+</head>
+<body>
+<div id="page-wrapper">
+
+  <div id="header">
+    <div id="header-icon">🔥</div>
+    <div id="header-logo">
+      <span class="logo-main">DVWA</span>
+      <span class="logo-sub">Damn Vulnerable Web App</span>
+    </div>
+    <div id="header-tagline">Security Training Platform — For Educational Use Only</div>
+  </div>
+
+  <div id="user-info-bar">
+    Security Level: <span class="badge sec-low">Low</span>
+    &nbsp;|&nbsp; <a href="/vulnerabilities/brute/" style="color:#a0ffb0;">[ Back to Login ]</a>
+  </div>
+
+  <div id="navbar">
+    <a href="/vulnerabilities/brute/">Brute Force</a>
+    <a href="/attack-log">Attack Log</a>
+    <a href="/setup" class="nav-active">Setup / Users</a>
+    <a href="/logout">Logout</a>
+  </div>
+
+  <div id="body-wrapper">
+    <div id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-header">Vulnerabilities</div>
+        <ul class="sidebar-nav">
+          <li><a href="/vulnerabilities/brute/">Brute Force</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-header">Setup</div>
+        <ul class="sidebar-nav">
+          <li><a href="/setup" class="active-link">Users &amp; Credentials</a></li>
+          <li><a href="/attack-log">Attack Log</a></li>
+          <li><a href="/api/log">Log API (JSON)</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="main-content">
+      <div class="page-title">Setup — Users &amp; Credentials</div>
+      <div class="page-subtitle">
+        Plaintext credential store — intentional vulnerability. No password hashing applied.
+      </div>
+
+      <div class="alert alert-warning">
+        ⚠ <strong>Intentional vulnerability:</strong> Passwords are stored and displayed in plaintext.
+        In production, always use bcrypt or argon2 with per-user salts.
+      </div>
+
+      <h3 class="tab-heading" style="margin-top:16px;">Registered Users</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Password (plaintext)</th>
+            <th>Role</th>
+            <th>Flag</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for username, info in users.items() %}
+          <tr>
+            <td><code>{{ username }}</code></td>
+            <td><code>{{ info.password }}</code></td>
+            <td>{{ info.role }}</td>
+            <td><code style="font-size:10px;">{{ info.flag }}</code></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3 class="tab-heading" style="margin-top:22px;">Lab Configuration</h3>
+      <table class="data-table">
+        <thead><tr><th>Setting</th><th>Value</th><th>Secure Default</th></tr></thead>
+        <tbody>
+          <tr><td>HTTP Method</td><td><code style="color:#cc0000;">GET</code></td><td>POST over HTTPS</td></tr>
+          <tr><td>Rate Limiting</td><td><code style="color:#cc0000;">Disabled</code></td><td>10 req/min per IP</td></tr>
+          <tr><td>Account Lockout</td><td><code style="color:#cc0000;">Disabled</code></td><td>Lock after 5 failures</td></tr>
+          <tr><td>CSRF Token</td><td><code style="color:#cc0000;">None</code></td><td>Per-session token required</td></tr>
+          <tr><td>Password Storage</td><td><code style="color:#cc0000;">Plaintext</code></td><td>bcrypt / argon2</td></tr>
+          <tr><td>Session Rotation</td><td><code style="color:#cc0000;">None on login</code></td><td>Regenerate session ID</td></tr>
+          <tr><td>Error Verbosity</td><td><code style="color:#cc0000;">High (username leakage)</code></td><td>Generic error only</td></tr>
+          <tr><td>Debug Mode</td><td><code style="color:#cc0000;">On (stack traces)</code></td><td>Off in production</td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:18px;">
+        <a href="/vulnerabilities/brute/"><button class="btn-secondary">Go to Login Lab →</button></a>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer">
+    Damn Vulnerable Web Application (DVWA) — Brute Force Lab &nbsp;&bull;&nbsp; For educational use only
+  </div>
+</div>
+</body>
+</html>

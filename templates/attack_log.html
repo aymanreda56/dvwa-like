@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DVWA — Attack Log</title>
+  <link rel="stylesheet" href="/static/css/dvwa.css" />
+</head>
+<body>
+<div id="page-wrapper">
+
+  <div id="header">
+    <div id="header-icon">🔥</div>
+    <div id="header-logo">
+      <span class="logo-main">DVWA</span>
+      <span class="logo-sub">Damn Vulnerable Web App</span>
+    </div>
+    <div id="header-tagline">Security Training Platform — For Educational Use Only</div>
+  </div>
+
+  <div id="user-info-bar">
+    Security Level: <span class="badge sec-low">Low</span>
+    &nbsp;|&nbsp; <a href="/vulnerabilities/brute/" style="color:#a0ffb0;">[ Back to Login ]</a>
+  </div>
+
+  <div id="navbar">
+    <a href="/vulnerabilities/brute/">Brute Force</a>
+    <a href="/attack-log" class="nav-active">Attack Log</a>
+    <a href="/setup">Setup / Users</a>
+    <a href="/logout">Logout</a>
+  </div>
+
+  <div id="body-wrapper">
+    <div id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-header">Vulnerabilities</div>
+        <ul class="sidebar-nav">
+          <li><a href="/vulnerabilities/brute/">Brute Force</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-header">Setup</div>
+        <ul class="sidebar-nav">
+          <li><a href="/setup">Users &amp; Credentials</a></li>
+          <li><a href="/attack-log" class="active-link">Attack Log</a></li>
+          <li><a href="/api/log">Log API (JSON)</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="main-content">
+      <div class="page-title">Attack Log — Login Attempts</div>
+      <div class="page-subtitle">
+        All login attempts are logged here including credentials in plaintext — intentional information disclosure.
+        &nbsp;|&nbsp; Total attempts: <strong>{{ logs|length }}</strong>
+      </div>
+
+      <div style="margin-bottom:12px; display:flex; gap:8px; align-items:center;">
+        <button class="btn-danger" onclick="clearLog()">Clear Log</button>
+        <a href="/api/log" target="_blank"><button class="btn-secondary">View as JSON</button></a>
+        <button class="btn-secondary" onclick="location.reload()">↻ Refresh</button>
+      </div>
+
+      <div class="alert alert-warning">
+        ⚠ <strong>Intentional vulnerability:</strong> This page exposes all attempted credentials in plaintext —
+        including failed attempts. In a real app this would let an attacker harvest password reuse data
+        and mount credential stuffing attacks against other services.
+      </div>
+
+      {% if logs %}
+      <table class="data-table" style="margin-top:14px; font-size:12px;">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Timestamp (UTC)</th>
+            <th>IP Address</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in logs|reverse %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td style="white-space:nowrap;">{{ entry.timestamp }}</td>
+            <td><code>{{ entry.ip }}</code></td>
+            <td><code>{{ entry.username }}</code></td>
+            <td><code style="color:{% if entry.success %}#007700{% else %}#cc0000{% endif %};">
+              {{ entry.password }}
+            </code></td>
+            <td>
+              {% if entry.success %}
+                <span class="badge" style="background:#007700;color:#fff;border:1px solid #005500;">✅ SUCCESS</span>
+              {% else %}
+                <span class="badge" style="background:#cc0000;color:#fff;border:1px solid #990000;">❌ FAIL</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="alert alert-info" style="margin-top:14px;">
+        No login attempts recorded yet. Try logging in at the <a href="/vulnerabilities/brute/">Brute Force</a> page.
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <div id="footer">
+    Damn Vulnerable Web Application (DVWA) — Brute Force Lab &nbsp;&bull;&nbsp; For educational use only
+  </div>
+</div>
+
+<script>
+function clearLog() {
+  if (!confirm("Clear all attack log entries?")) return;
+  fetch("/api/reset-log", { method: "POST" })
+    .then(r => r.json())
+    .then(() => location.reload());
+}
+</script>
+</body>
+</html>

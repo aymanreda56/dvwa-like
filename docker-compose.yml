@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  dvwa-brute:
+    build: .
+    container_name: dvwa-brute-lab
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    restart: unless-stopped
+    # No resource limits intentionally — students can hammer it
