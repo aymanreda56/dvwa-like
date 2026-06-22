@@ -25,13 +25,13 @@ COPY app.py .
 COPY templates/ templates/
 COPY static/ static/
 
-# ── Expose Flask port ──
-EXPOSE 5000
+# ── Expose port — Railway overrides this with $PORT at runtime ──
+EXPOSE ${PORT:-5000}
 
-# ── Health check ──
-HEALTHCHECK --interval=15s --timeout=5s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:5000/ || exit 1
+# ── Health check — must use $PORT so it matches whatever Railway assigns ──
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-5000}/ || exit 1
 
-# ── Run with Gunicorn in dev mode ──
-# Using Flask dev server for debug=True (intentional — shows stack traces)
-CMD ["python", "app.py"]
+# ── Run with Gunicorn bound to $PORT ──
+# gunicorn is already in requirements.txt
+CMD gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 1 app:app
